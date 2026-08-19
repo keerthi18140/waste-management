@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Waste Management Hub</title>
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+</head>
+<body class="bg-light">
+
+<!-- ======================= NAVBAR ======================= -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-success">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="#">
+      <i class="bi bi-recycle"></i> EcoWaste Manager
+    </a>
+  </div>
+</nav>
+
+<!-- ======================= HERO ======================= -->
+<div class="container py-5 text-center">
+  <h1 class="display-5 fw-bold text-success">Smart Waste Management</h1>
+  <p class="lead text-muted">
+    Learn how to identify, sort, and recycle waste responsibly. Chat with
+    <strong>EcoBot</strong> for descriptions, waste types, recycling details,
+    and personalized recommendations &mdash; click the chat icon in the corner!
+  </p>
+</div>
+
+<!-- ======================= CATEGORY CARDS ======================= -->
+<div class="container pb-5">
+  <div class="row g-4" id="categoryCards">
+    <!-- populated by JS from /api/categories -->
+  </div>
+</div>
+
+<!-- ======================= FOOTER ======================= -->
+<footer class="bg-dark text-light text-center py-3">
+  <small>&copy; 2026 EcoWaste Manager &mdash; Powered by Ollama (llama3.2)</small>
+</footer>
+
+<!-- ======================= CHAT ICON (bottom-right) ======================= -->
+<button id="chatToggleBtn"
+        class="btn btn-success rounded-circle shadow position-fixed d-flex align-items-center justify-content-center"
+        style="bottom: 24px; right: 24px; width: 60px; height: 60px; z-index: 1055;">
+  <i class="bi bi-chat-dots-fill fs-4"></i>
+</button>
+
+<!-- ======================= CHAT WINDOW ======================= -->
+<div id="chatWindow"
+     class="card shadow position-fixed d-none"
+     style="bottom: 96px; right: 24px; width: 360px; max-width: 90vw; height: 520px; max-height: 75vh; z-index: 1056;">
+
+  <!-- Header -->
+  <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+    <div>
+      <i class="bi bi-robot"></i>
+      <strong>EcoBot</strong>
+      <small class="d-block opacity-75">Waste Management Assistant</small>
+    </div>
+    <div>
+      <button id="resetChatBtn" class="btn btn-sm btn-outline-light border-0 me-1" title="Clear chat">
+        <i class="bi bi-arrow-counterclockwise"></i>
+      </button>
+      <button id="closeChatBtn" class="btn btn-sm btn-outline-light border-0" title="Close">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div id="chatMessages" class="card-body overflow-auto d-flex flex-column gap-2" style="flex: 1 1 auto;">
+    <div class="d-flex justify-content-start">
+      <div class="bg-light border rounded-3 p-2 px-3" style="max-width: 85%;">
+        Hi! I'm <strong>EcoBot</strong> 🌱. Ask me about any waste type &mdash;
+        e.g. "How do I recycle plastic bottles?" or "What should I do with old batteries?"
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick suggestion chips -->
+  <div id="quickChips" class="px-2 pb-1 d-flex flex-wrap gap-1"></div>
+
+  <!-- Typing indicator -->
+  <div id="typingIndicator" class="px-3 pb-1 text-muted small d-none">
+    <i class="bi bi-three-dots"></i> EcoBot is typing...
+  </div>
+
+  <!-- Input -->
+  <div class="card-footer bg-white">
+    <form id="chatForm" class="d-flex gap-2">
+      <input type="text" id="chatInput" class="form-control" placeholder="Type your message..." autocomplete="off" required>
+      <button type="submit" class="btn btn-success">
+        <i class="bi bi-send-fill"></i>
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const chatToggleBtn = document.getElementById('chatToggleBtn');
+  const chatWindow = document.getElementById('chatWindow');
+  const closeChatBtn = document.getElementById('closeChatBtn');
+  const resetChatBtn = document.getElementById('resetChatBtn');
+  const chatForm = document.getElementById('chatForm');
+  const chatInput = document.getElementById('chatInput');
+  const chatMessages = document.getElementById('chatMessages');
+  const typingIndicator = document.getElementById('typingIndicator');
+  const quickChips = document.getElementById('quickChips');
+  const categoryCards = document.getElementById('categoryCards');
+
+  // ---------- Toggle chat window ----------
+  chatToggleBtn.addEventListener('click', function () {
+    chatWindow.classList.toggle('d-none');
+    if (!chatWindow.classList.contains('d-none')) {
+      loadHistory();
+      chatInput.focus();
+    }
+  });
+  closeChatBtn.addEventListener('click', () => chatWindow.classList.add('d-none'));
+
+  // ---------- Append a message bubble ----------
+  function appendMessage(role, text) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'd-flex ' + (role === 'user' ? 'justify-content-end' : 'justify-content-start');
+
+    const bubble = document.createElement('div');
+    bubble.className = (role === 'user'
+      ? 'bg-success text-white'
+      : 'bg-light border') + ' rounded-3 p-2 px-3';
+    bubble.style.maxWidth = '85%';
+    bubble.style.whiteSpace = 'pre-wrap';
+    bubble.textContent = text;
+
+    wrapper.appendChild(bubble);
+    chatMessages.appendChild(wrapper);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  // ---------- Load prior session history (memory) ----------
+  function loadHistory() {
+    fetch('/api/history')
+      .then(res => res.json())
+      .then(data => {
+        chatMessages.innerHTML = '';
+        if (!data.history || data.history.length === 0) {
+          appendMessage('assistant',
+            "Hi! I'm EcoBot 🌱. Ask me about any waste type — e.g. \"How do I recycle plastic bottles?\"");
+          return;
+        }
+        data.history.forEach(msg => appendMessage(msg.role, msg.content));
+      })
+      .catch(() => {});
+  }
+
+  // ---------- Send message ----------
+  chatForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const message = chatInput.value.trim();
+    if (!message) return;
+
+    appendMessage('user', message);
+    chatInput.value = '';
+    typingIndicator.classList.remove('d-none');
+
+    fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: message })
+    })
+      .then(res => res.json())
+      .then(data => {
+        typingIndicator.classList.add('d-none');
+        appendMessage('assistant', data.reply || 'Sorry, something went wrong.');
+      })
+      .catch(() => {
+        typingIndicator.classList.add('d-none');
+        appendMessage('assistant', '⚠️ Could not reach the server.');
+      });
+  });
+
+  // ---------- Reset chat ----------
+  resetChatBtn.addEventListener('click', function () {
+    fetch('/api/reset', { method: 'POST' })
+      .then(() => {
+        chatMessages.innerHTML = '';
+        appendMessage('assistant', 'Chat history cleared. How can I help you today? 🌱');
+      });
+  });
+
+  // ---------- Load waste categories: cards + quick chips ----------
+  fetch('/api/categories')
+    .then(res => res.json())
+    .then(data => {
+      const categories = data.waste_categories || [];
+
+      // Home page cards
+      categories.forEach(cat => {
+        const col = document.createElement('div');
+        col.className = 'col-md-6 col-lg-4';
+        col.innerHTML = `
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-body">
+              <h5 class="card-title text-success"><i class="bi bi-tag-fill"></i> ${cat.type}</h5>
+              <p class="card-text">${cat.description}</p>
+              <p class="mb-1"><strong>Recycle:</strong> ${cat.recycle_details}</p>
+              <p class="mb-1"><strong>Recommendation:</strong> ${cat.recommendation}</p>
+              <ul class="mb-0">
+                ${cat.suggestions.map(s => `<li>${s}</li>`).join('')}
+              </ul>
+            </div>
+          </div>`;
+        categoryCards.appendChild(col);
+      });
+
+      // Quick chips inside chat window
+      categories.slice(0, 4).forEach(cat => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'btn btn-sm btn-outline-success rounded-pill';
+        chip.textContent = cat.type;
+        chip.addEventListener('click', function () {
+          chatInput.value = 'Tell me about ' + cat.type + ' — description, recycling details, and suggestions.';
+          chatForm.dispatchEvent(new Event('submit'));
+        });
+        quickChips.appendChild(chip);
+      });
+    })
+    .catch(() => {});
+});
+</script>
+
+</body>
+</html>

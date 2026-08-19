@@ -1,0 +1,9 @@
+SQLite format 3@  .v�
+��P++Ytablesqlite_sequencesqlite_sequenceCREATE TABLE sqlite_sequence(name,seq)�r%%�'tablechat_historychat_historyCREATE TABLE chat_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        session_id TEXT NOT NULL,
+        role TEXT NOT NULL,
+        message TEXT NOT NULL,
+        created_at TEXT NOT NULL
+    )
+

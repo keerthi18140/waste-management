@@ -1,0 +1,88 @@
+{
+  "waste_categories": [
+    {
+      "type": "Plastic Waste",
+      "description": "Includes bottles, bags, packaging, containers, and other petroleum-based synthetic materials that do not decompose naturally for hundreds of years.",
+      "recycle_details": "Rinse containers before recycling. Sort by resin code (PET, HDPE, PVC, LDPE, PP, PS). Take to a plastic recycling facility or curbside recycling bin (blue bin in most municipalities).",
+      "recommendation": "Reduce single-use plastics, prefer reusable bottles/bags, and choose products with recyclable packaging codes 1, 2, or 5.",
+      "suggestions": [
+        "Carry a reusable shopping bag",
+        "Switch to a steel or glass water bottle",
+        "Avoid buying over-packaged products",
+        "Donate or repurpose sturdy plastic containers"
+      ]
+    },
+    {
+      "type": "Organic / Wet Waste",
+      "description": "Biodegradable waste such as food scraps, vegetable peels, garden waste, and other kitchen leftovers that decompose naturally.",
+      "recycle_details": "Compost at home using a compost bin or pit. Municipal wet-waste collection often converts this into compost or biogas at processing plants.",
+      "recommendation": "Segregate wet waste from dry waste at source and compost wherever possible to reduce landfill load.",
+      "suggestions": [
+        "Start a kitchen compost bin",
+        "Use vegetable peels as garden mulch",
+        "Avoid food wastage through meal planning",
+        "Use community composting facilities if available"
+      ]
+    },
+    {
+      "type": "E-Waste",
+      "description": "Discarded electronic devices like phones, batteries, chargers, computers, and other electrical appliances containing hazardous heavy metals.",
+      "recycle_details": "Never dispose of e-waste in regular bins. Drop off at authorized e-waste collection centers or manufacturer take-back programs where components are safely dismantled and recycled.",
+      "recommendation": "Repair or donate working electronics instead of discarding them; recycle only through certified e-waste handlers.",
+      "suggestions": [
+        "Locate your nearest certified e-waste center",
+        "Wipe personal data before recycling devices",
+        "Sell or donate still-functional gadgets",
+        "Avoid throwing batteries in household trash"
+      ]
+    },
+    {
+      "type": "Paper & Cardboard",
+      "description": "Includes newspapers, cardboard boxes, office paper, magazines, and packaging material made from wood pulp.",
+      "recycle_details": "Flatten cardboard boxes, keep paper dry and free from food contamination, and place in dry-waste/paper recycling bins.",
+      "recommendation": "Reuse paper for notes/packing before recycling, and buy recycled-content paper products.",
+      "suggestions": [
+        "Use both sides of paper before discarding",
+        "Flatten boxes to save recycling bin space",
+        "Shred sensitive documents before recycling",
+        "Avoid wet or greasy paper in recycling bins"
+      ]
+    },
+    {
+      "type": "Glass Waste",
+      "description": "Bottles, jars, and glass containers that are 100% recyclable without loss of quality, made from sand, soda ash, and limestone.",
+      "recycle_details": "Rinse and separate by color if required locally (clear, green, brown). Drop at glass recycling bins; avoid mixing with ceramics or mirrors.",
+      "recommendation": "Reuse glass jars for storage before recycling; glass can be recycled indefinitely.",
+      "suggestions": [
+        "Reuse jars for storing spices or leftovers",
+        "Handle broken glass carefully and wrap before disposal",
+        "Don't mix window glass or mirrors with bottle glass",
+        "Return bottles to deposit-return schemes if available"
+      ]
+    },
+    {
+      "type": "Hazardous Waste",
+      "description": "Chemicals, paints, pesticides, medical waste, and other substances that are toxic, corrosive, flammable, or reactive.",
+      "recycle_details": "Never mix with regular trash. Take to designated hazardous waste collection events or facilities for safe treatment and disposal.",
+      "recommendation": "Buy only the quantity needed, store safely, and use community hazardous-waste drop-off days.",
+      "suggestions": [
+        "Store chemicals in original labeled containers",
+        "Never pour chemicals down the drain",
+        "Return expired medicines to a pharmacy take-back program",
+        "Use eco-friendly cleaning alternatives when possible"
+      ]
+    },
+    {
+      "type": "Metal Waste",
+      "description": "Includes cans, foil, scrap metal, and other ferrous or non-ferrous metal items that are highly recyclable.",
+      "recycle_details": "Rinse food cans, crush if possible, and place in metal/dry-waste recycling bins or sell to scrap dealers.",
+      "recommendation": "Recycle metal repeatedly as it retains quality; consolidate scrap metal for local scrap collection.",
+      "suggestions": [
+        "Rinse out cans before recycling",
+        "Collect aluminum foil separately and ball it up",
+        "Sell larger scrap metal to certified scrap dealers",
+        "Avoid mixing metal with general waste"
+      ]
+    }
+  ]
+}
